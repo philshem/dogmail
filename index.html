@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DogMail Server Logs 🐾</title>
+
+<!-- 🐶 Emoji favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐶</text></svg>">
+
+<style>
+  :root {
+    font-size: clamp(14px, 2.8vw, 18px);
+  }
+  body {
+    background-color: #000;
+    color: #0f0;
+    font-family: "Courier New", monospace;
+    padding: 20px;
+    white-space: pre-wrap;
+    overflow-y: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #log {
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    word-break: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .timestamp { color: #888; }
+  .info { color: #0f0; }
+  .warn { color: #ff0; }
+  .error { color: #f33; }
+  .dog { color: #6f6; }
+  .blink::after {
+    content: '▮';
+    animation: blink 1s step-start infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  @media (max-width: 600px) {
+    body {
+      padding: 14px;
+    }
+    #log {
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+    .blink::after {
+      font-size: 1.1rem;
+    }
+  }
+</style>
+</head>
+<body>
+<pre id="log"></pre>
+<div class="blink"></div>
+
+<script>
+const log = document.getElementById("log");
+
+const messages = [
+  ["info", "🐾 DogMail v3.1 sniffing packets..."],
+  ["info", "🐕 Fetching DNS records from 🦴 dogzone.net..."],
+  ["dog", "🐩 Connected to IMAP server bark.mail.local"],
+  ["info", "📬 New mail received for kima@dogmail.ch"],
+  ["warn", "⚠️ Message delayed — chasing the mailman..."],
+  ["dog", "🐕‍🦺 Spam filter sniff test passed ✅"],
+  ["error", "🚫 Connection dropped: too many treats in mailbox"],
+  ["info", "🐶 Retrying fetch operation (attempt #2)..."],
+  ["dog", "📡 Delivery confirmed for woof@dogmail.ch"],
+  ["info", "🐾 All systems stable. Tails wagging."],
+  ["info", "🐕 Checking fire hydrant availability..."],
+  ["warn", "🐾 Disk usage high — 98% full of bones!"],
+  ["dog", "🐶 Performing daily barkup..."],
+  ["info", "📡 Woofmail relay handshake complete."],
+  ["dog", "🐾 User 'avrah' authenticated successfully."],
+  ["info", "🐾 Queued 3 messages for outbound wag relay."],
+  ["warn", "🐶 DNS sniff failed, retrying sniff cycle..."],
+  ["dog", "🐾 New node registered: chewtoy02.local"],
+  ["info", "🐕‍🦺 Session closed cleanly with remote kennel."]
+];
+
+const hosts = ["barkmail01", "sniffer02", "wagproxy03", "chewtoy02", "doggateway01", "mailhound09"];
+const domains = [".dogmail.local", ".barknet.lan", ".kennel.net", ".dogzone.net"];
+
+function randomHost() {
+  const host = hosts[Math.floor(Math.random() * hosts.length)];
+  const domain = domains[Math.floor(Math.random() * domains.length)];
+  const port = Math.floor(Math.random() * 4000) + 1000;
+  return `${host}${domain}:${port}`;
+}
+
+function randomIP() {
+  return `172.23.${Math.floor(Math.random() * 50)}.${Math.floor(Math.random() * 255)}`;
+}
+
+function now() {
+  return new Date().toISOString().replace('T', ' ').split('.')[0];
+}
+
+function addLine(level, msg) {
+  const line = `<span class="timestamp">[${now()}]</span> <span class="${level}">${msg}</span> <span class="timestamp">(${randomHost()} @ ${randomIP()})</span>\n`;
+  log.insertAdjacentHTML("beforeend", line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function randomDelay() {
+  return 1000 + Math.random() * 3000; // 1–4 seconds
+}
+
+function nextLog() {
+  const [level, msg] = messages[Math.floor(Math.random() * messages.length)];
+  addLine(level, msg);
+  setTimeout(nextLog, randomDelay());
+}
+
+// Start
+addLine("info", "🐾 DogMail Server starting up...");
+setTimeout(nextLog, 1500);
+</script>
+</body>
+</html>
