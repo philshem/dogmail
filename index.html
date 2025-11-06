@@ -76,11 +76,11 @@ const messages = [
   ["dog", "📡 Delivery confirmed for woof@dogmail.ch"],
   ["info", "🐾 All systems stable. Tails wagging."],
   ["info", "🐕 Checking fire hydrant availability..."],
-  ["warn", "🐾 Disk usage high — 98% full of bones!"],
+  ["warn", () => `🐾 Disk usage high — ${randomDiskUsage()}% full of bones!`],
   ["dog", "🐶 Performing daily barkup..."],
   ["info", "📡 Woofmail relay handshake complete."],
   ["dog", "🐾 User 'bowwow' authenticated successfully."],
-  ["info", "🐾 Queued 3 messages for outbound wag relay."],
+  ["info", () => `🐾 Queued ${randomOutboundCount()} messages for outbound wag relay.`],
   ["warn", "🐶 DNS sniff failed, retrying sniff cycle..."],
   ["dog", "🐾 New node registered: chewtoy02.local"],
   ["info", "🐕‍🦺 Session closed cleanly with remote kennel."]
@@ -100,6 +100,14 @@ function randomIP() {
   return `172.23.${Math.floor(Math.random() * 50)}.${Math.floor(Math.random() * 255)}`;
 }
 
+function randomDiskUsage() {
+  return Math.floor(Math.random() * 10) + 90;
+}
+
+function randomOutboundCount() {
+  return Math.floor(Math.random() * 9) + 1;
+}
+
 function now() {
   return new Date().toISOString().replace('T', ' ').split('.')[0];
 }
@@ -116,7 +124,8 @@ function randomDelay() {
 
 function nextLog() {
   const [level, msg] = messages[Math.floor(Math.random() * messages.length)];
-  addLine(level, msg);
+  const resolvedMsg = typeof msg === "function" ? msg() : msg;
+  addLine(level, resolvedMsg);
   setTimeout(nextLog, randomDelay());
 }
 
